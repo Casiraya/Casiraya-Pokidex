@@ -1,211 +1,189 @@
-/* General */
+
 body {
-    font-family: 'Poppins', Arial, sans-serif;
-    margin: 0;
-    padding: 20px;
-    background-color: #f0f0f0;
-  }
-  
-  h1 {
-    text-align: center;
-    font-weight: 600;
-    font-size: 2.5rem;
-    margin-bottom: 20px;
-  }
-  
-  /* Controls */
-  .controls {
-    text-align: center;
-    margin-bottom: 20px;
-  }
-  
-  #search {
-    padding: 10px;
-    width: 100%;
-    max-width: 300px;
-    font-size: 16px;
-    border-radius: 8px;
-    border: 1px solid #ccc;
-    outline: none;
-    transition: border-color 0.3s;
-  }
-  
-  #search:focus {
-    border-color: #6890F0;
-  }
-  
-  /* Grid */
+  font-family: 'Poppins', Arial, sans-serif;
+  margin: 0;
+  padding: 20px;
+  background-color: #f0f0f0;
+  min-height: 100vh;
+  background-image: url('https://repository-images.githubusercontent.com/479796250/4bc54bf3-5e3d-4eac-af9c-4bc6783e3e4a');
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+}
+
+
+h1 {
+  text-align: center;
+  font-weight: 600;
+  font-size: 2.5rem;
+  margin-bottom: 20px;
+}
+
+
+.controls {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+#search {
+  padding: 10px;
+  width: 100%;
+  max-width: 300px;
+  font-size: 16px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  outline: none;
+  transition: border-color 0.3s;
+}
+
+#search:focus {
+  border-color: #6890F0;
+}
+
+
+.scrollable-container {
+  height: 70vh; 
+  overflow-y: auto;
+  padding-right: 5px;
+}
+
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 10px;
+}
+
+
+.card {
+  background: white;
+  border-radius: 10px;
+  text-align: center;
+  padding: 10px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, opacity 0.5s ease;
+  opacity: 0;
+  transform: scale(0.9);
+}
+
+.card.show {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.card img {
+  width: 80px;
+  height: 80px;
+  margin-bottom: 5px;
+}
+
+.card:hover {
+  transform: scale(1.08);
+}
+
+
+.type-badges {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 5px;
+}
+
+.type-badge {
+  background-color: #eee;
+  color: black;
+  padding: 2px 6px;
+  margin: 2px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+
+.pagination {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.pagination button {
+  padding: 8px 12px;
+  margin: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  border: none;
+  border-radius: 8px;
+  background-color: #6890F0;
+  color: white;
+  transition: background-color 0.3s;
+}
+
+.pagination button:hover {
+  background-color: #4860c0;
+}
+
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow-y: auto;
+  z-index: 10;
+}
+
+.modal-content {
+  background-color: white;
+  padding: 20px;
+  width: 90%;
+  max-width: 500px;
+  border-radius: 10px;
+  position: relative;
+  text-align: center;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+#close-btn {
+  position: absolute;
+  top: 10px;
+  right: 20px;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+
+.loader {
+  border: 8px solid #f3f3f3;
+  border-top: 8px solid #3498db;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  margin: 20px auto;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.hidden {
+  display: none;
+}
+
+
+@media (max-width: 600px) {
   .grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-    gap: 15px;
-    margin-top: 20px;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
   }
-  
-  /* Cards */
-  .card {
-    background: white;
-    border-radius: 10px;
-    text-align: center;
-    padding: 10px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-    cursor: pointer;
-    transition: transform 0.3s ease, box-shadow 0.3s ease, opacity 0.5s ease;
-    opacity: 0;
-    transform: scale(0.9);
-  }
-  
-  .card.show {
-    opacity: 1;
-    transform: scale(1);
-  }
-  
-  .card:hover {
-    transform: scale(1.08);
-  }
-  
-  /* Badges */
-  .type-badges {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    margin-top: 5px;
-  }
-  
-  .type-badge {
-    background-color: rgba(255,255,255,0.7);
-    color: black;
-    padding: 2px 6px;
-    margin: 2px;
-    border-radius: 12px;
-    font-size: 12px;
-    font-weight: bold;
-  }
-  
-  /* Pagination */
-  .pagination {
-    margin-top: 20px;
-    text-align: center;
-  }
-  
-  .pagination button {
-    padding: 8px 12px;
-    margin: 5px;
-    font-size: 16px;
-    cursor: pointer;
-    border: none;
-    border-radius: 8px;
-    background-color: #6890F0;
-    color: white;
-    transition: background-color 0.3s;
-  }
-  
-  .pagination button:hover {
-    background-color: #4860c0;
-  }
-  
-  /* Modal */
-  .modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0,0,0,0.6);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  
-  .modal-content {
-    background-color: white;
-    padding: 20px;
+
+  #search {
     width: 90%;
-    max-width: 500px;
-    border-radius: 10px;
-    position: relative;
-    text-align: center;
-    transition: background 0.3s ease;
   }
-  
-  #close-btn {
-    position: absolute;
-    top: 10px;
-    right: 20px;
-    font-size: 24px;
-    cursor: pointer;
-  }
-  
-  /* Loader */
-  .loader {
-    border: 8px solid #f3f3f3;
-    border-top: 8px solid #3498db;
-    border-radius: 50%;
-    width: 50px;
-    height: 50px;
-    margin: 20px auto;
-    animation: spin 1s linear infinite;
-  }
-  
-  @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-  }
-  
-  .hidden {
-    display: none;
-  }
-  
-  /* Responsive design */
-  @media (max-width: 768px) {
-    h1 {
-      font-size: 2rem;
-    }
-  
-    .controls {
-      margin-bottom: 10px;
-    }
-  
-    #search {
-      width: 90%;
-    }
-  
-    .grid {
-      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-    }
-  
-    .pagination button {
-      font-size: 14px;
-      padding: 6px 10px;
-    }
-  
-    .modal-content {
-      width: 90%;
-      padding: 15px;
-    }
-  }
-  
-  @media (max-width: 480px) {
-    h1 {
-      font-size: 1.5rem;
-    }
-  
-    #search {
-      width: 100%;
-    }
-  
-    .grid {
-      grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-    }
-  
-    .pagination button {
-      font-size: 12px;
-      padding: 5px 8px;
-    }
-  
-    .modal-content {
-      width: 95%;
-      padding: 10px;
-    }
-  }
-  
+}

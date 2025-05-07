@@ -34,25 +34,54 @@ const typeColors = {
   steel: '#B8B8D0'
 };
 
+const statIcons = {
+  hp: '❤️',
+  attack: '🗡️',
+  defense: '🛡️',
+  'special-attack': '🧠',
+  'special-defense': '🛡️‍🧬',
+  speed: '🏃'
+};
+
+const abilityIcon = '🎯';
+const typeIcon = '🏷️';
+
 const capitalize = (s) => s.charAt(0).toUpperCase() + s.slice(1);
+
+const hexToRGBA = (hex, alpha = 1) => {
+  const bigint = parseInt(hex.slice(1), 16);
+  const r = (bigint >> 16) & 255;
+  const g = (bigint >> 8) & 255;
+  const b = bigint & 255;
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+};
 
 const fetchPokemonList = async (page = 1) => {
   const offset = (page - 1) * limit;
   const url = `https://pokeapi.co/api/v2/pokemon?limit=${limit}&offset=${offset}`;
   showLoader();
-  const res = await fetch(url);
-  const data = await res.json();
-  totalPokemon = data.count;
-  const pokemonResults = data.results;
-  pokedex.innerHTML = '';
-  await Promise.all(pokemonResults.map(p => fetchPokemonData(p.url)));
+  try {
+    const res = await fetch(url);
+    const data = await res.json();
+    totalPokemon = data.count;
+    const pokemonResults = data.results;
+    pokedex.innerHTML = '';
+    await Promise.all(pokemonResults.map(p => fetchPokemonData(p.url)));
+  } catch (error) {
+    console.error('Failed to fetch Pokémon list:', error);
+    pokedex.innerHTML = `<p>Error loading Pokémon. Please try again later.</p>`;
+  }
   hideLoader();
 };
 
 const fetchPokemonData = async (url) => {
-  const res = await fetch(url);
-  const pokemon = await res.json();
-  createPokemonCard(pokemon);
+  try {
+    const res = await fetch(url);
+    const pokemon = await res.json();
+    createPokemonCard(pokemon);
+  } catch (error) {
+    console.error('Failed to fetch Pokémon data:', error);
+  }
 };
 
 const createPokemonCard = (pokemon) => {
@@ -63,7 +92,6 @@ const createPokemonCard = (pokemon) => {
   const bgColor = typeColors[primaryType] || '#F5F5F5';
   card.style.background = bgColor;
 
-  // Dynamic glow effect on hover
   card.addEventListener('mouseenter', () => {
     card.style.boxShadow = `
       0 0 15px rgba(255, 255, 255, 0.6),
@@ -80,8 +108,8 @@ const createPokemonCard = (pokemon) => {
   `).join('');
 
   card.innerHTML = `
-    <img src="${pokemon.sprites.front_default}" alt="${pokemon.name}">
-    <h3>${capitalize(pokemon.name)}</h3>
+    <img src="${pokemon.sprites.front_default}" alt="${pokemon.name}" style="width:80px; height:80px;">
+    <h3 style="font-size:16px;">${capitalize(pokemon.name)}</h3>
     <div class="type-badges">${typeBadges}</div>
   `;
 
@@ -89,7 +117,7 @@ const createPokemonCard = (pokemon) => {
 
   pokedex.appendChild(card);
 
-  // Animate cards appearing
+  // Animate appearance
   setTimeout(() => {
     card.classList.add('show');
   }, 100);
@@ -104,23 +132,46 @@ const showPokemonDetails = (pokemon) => {
     <h2>${capitalize(pokemon.name)}</h2>
     <img src="${pokemon.sprites.other['official-artwork'].front_default}" alt="${pokemon.name}" style="width:150px;">
     <h3>Stats:</h3>
-    <ul>
-      ${pokemon.stats.map(stat => `<li>${capitalize(stat.stat.name)}: ${stat.base_stat}</li>`).join('')}
-    </ul>
+    <div style="text-align:left; display:flex; flex-direction:column; gap:5px;">
+      ${pokemon.stats.map(stat => `
+        <div>
+          ${statIcons[stat.stat.name] || '📊'} <strong>${capitalize(stat.stat.name)}:</strong> ${stat.base_stat}
+        </div>
+      `).join('')}
+    </div>
+
     <h3>Abilities:</h3>
-    <ul>
-      ${pokemon.abilities.map(ab => `<li>${capitalize(ab.ability.name)}</li>`).join('')}
-    </ul>
+    <div style="text-align:left; display:flex; flex-direction:column; gap:5px;">
+      ${pokemon.abilities.map(ab => `
+        <div>
+          ${abilityIcon} <strong>${capitalize(ab.ability.name)}</strong>
+        </div>
+      `).join('')}
+    </div>
+
     <h3>Type(s):</h3>
-    <ul>
-      ${pokemon.types.map(t => `<li>${capitalize(t.type.name)}</li>`).join('')}
-    </ul>
+    <div style="text-align:left; display:flex; flex-direction:column; gap:5px;">
+      ${pokemon.types.map(t => `
+        <div>
+          ${typeIcon} <strong>${capitalize(t.type.name)}</strong>
+        </div>
+      `).join('')}
+    </div>
   `;
   modal.classList.remove('hidden');
 };
 
 closeBtn.addEventListener('click', () => {
   modal.classList.add('hidden');
+});
+
+
+
+// Close modal when clicking outside
+window.addEventListener('click', (event) => {
+  if (event.target === modal) {
+    modal.classList.add('hidden');
+  }
 });
 
 const showLoader = () => loader.classList.remove('hidden');
@@ -154,11 +205,20 @@ searchInput.addEventListener('input', async (e) => {
     fetchPokemonList(currentPage);
   } else {
     const url = `https://pokeapi.co/api/v2/pokemon/${query}`;
-    const res = await fetch(url);
-    const pokemon = await res.json();
-    pokedex.innerHTML = '';
-    createPokemonCard(pokemon);
+    showLoader();
+    try {
+      const res = await fetch(url);
+      if (!res.ok) throw new Error('Not found');
+      const pokemon = await res.json();
+      pokedex.innerHTML = '';
+      createPokemonCard(pokemon);
+    } catch (error) {
+      pokedex.innerHTML = `<p style="text-align:center;">No Pokémon found!</p>`;
+      console.error('Search error:', error);
+    }
+    hideLoader();
   }
 });
 
+// Initial load
 fetchPokemonList(currentPage);
